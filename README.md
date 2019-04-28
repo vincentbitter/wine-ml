@@ -1,5 +1,5 @@
 # Tasting wine with ML.NET
-This repository contains the example code as described on blog.vincentbitter.nl/tasting-wine-with-ml-net/
+This repository contains the example code as described on https://blog.vincentbitter.nl/tasting-wine-with-ml-net/
 
 ## Data
 This project contains data downloaded from https://archive.ics.uci.edu/ml/datasets/wine+quality
