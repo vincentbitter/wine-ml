@@ -59,7 +59,6 @@ namespace WineML
                 Sulphates = 0.47F,
                 Alcohol = 9.5F,
                 Quality = 0 // We are gonna predict this. The expected value is 6
-
             });
 
             Console.WriteLine("\r\n");
@@ -86,9 +85,9 @@ namespace WineML
             Console.Write("Validate model...");
             var predictions = model.Transform(validationData);
             var metrics = mlContext.Regression.Evaluate(predictions, "Label", "Score");
+            Console.WriteLine("DONE!");
             Console.WriteLine($"RSquared Score: {metrics.RSquared:0.##}");
             Console.WriteLine($"Root Mean Squared Error: {metrics.RootMeanSquaredError:#.##}");
-            Console.WriteLine("DONE!");
         }
 
         private static void Predict(MLContext mlContext, IDataView trainingData, WineData wineData)
