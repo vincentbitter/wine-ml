@@ -1,6 +1,8 @@
 ﻿using Microsoft.ML;
 using Microsoft.ML.Data;
 using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.IO;
 using Microsoft.ML.Trainers.FastTree;
 
@@ -60,6 +62,11 @@ namespace WineML
 
             });
 
+            Console.WriteLine("\r\n");
+
+            Console.WriteLine("**** FIND BEST FIT *****");
+            FindBestFit(mlContext, trainingData, validationData);
+
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
         }
@@ -94,6 +101,24 @@ namespace WineML
             var predictionFunction = mlContext.Model.CreatePredictionEngine<WineData, WinePrediction>(model);
             var prediction = predictionFunction.Predict(wineData);
             Console.WriteLine($"{prediction.Quality:0.##}");
+        }
+
+        private static void FindBestFit(MLContext mlContext, IDataView trainingData, IDataView validationData)
+        {
+            var rootSquarePerFeature = new Dictionary<string, double>();
+            
+            foreach (var feature in _features)
+            {
+                Console.Write($"Calculate RSquared for {feature}... ");
+                var model = CreateModel(mlContext, trainingData, feature);
+                var predictions = model.Transform(validationData);
+                var metrics = mlContext.Regression.Evaluate(predictions, "Label", "Score");
+                rootSquarePerFeature.Add(feature, metrics.RSquared);
+                Console.WriteLine($"{metrics.RSquared:0.##}");
+            }
+
+            var bestFit = rootSquarePerFeature.OrderByDescending(f => f.Value).First();
+            Console.WriteLine($"Best fit: {bestFit.Key} with a RSquared of {bestFit.Value:0.##}");
         }
 
         private static TransformerChain<RegressionPredictionTransformer<FastTreeRegressionModelParameters>> CreateModel(MLContext mlContext, IDataView trainingData, params string[] features)
