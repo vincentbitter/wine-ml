@@ -105,7 +105,7 @@ namespace WineML
 
         private static void FindBestFit(MLContext mlContext, IDataView trainingData, IDataView validationData)
         {
-            var rootSquarePerFeature = new Dictionary<string, double>();
+            var rSquarePerFeature = new Dictionary<string, double>();
             
             foreach (var feature in _features)
             {
@@ -113,11 +113,11 @@ namespace WineML
                 var model = CreateModel(mlContext, trainingData, feature);
                 var predictions = model.Transform(validationData);
                 var metrics = mlContext.Regression.Evaluate(predictions, "Label", "Score");
-                rootSquarePerFeature.Add(feature, metrics.RSquared);
+                rSquarePerFeature.Add(feature, metrics.RSquared);
                 Console.WriteLine($"{metrics.RSquared:0.##}");
             }
 
-            var bestFit = rootSquarePerFeature.OrderByDescending(f => f.Value).First();
+            var bestFit = rSquarePerFeature.OrderByDescending(f => f.Value).First();
             Console.WriteLine($"Best fit: {bestFit.Key} with a RSquared of {bestFit.Value:0.##}");
         }
 
