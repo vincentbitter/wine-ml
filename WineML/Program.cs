@@ -41,6 +41,25 @@ namespace WineML
             Console.WriteLine("**** TRAIN AND VALIDATE WITH ALL FEATURES *****");
             TrainAndValidate(mlContext, trainingData, validationData);
 
+            Console.WriteLine("\r\n");
+
+            Console.WriteLine("**** PREDICT QUALITY *****");
+            Predict(mlContext, trainingData, new WineData {
+                FixedAcidity = 7.6F,
+                VolatileAcidity = 0.17F,
+                CitricAcid = 0.27F,
+                ResidualSugar = 4.6F,
+                Chlorides = 0.05F,
+                FreeSulfurDioxide = 23,
+                TotalSulfurDioxide = 98,
+                Density = 0.99422F,
+                Ph = 3.08F,
+                Sulphates = 0.47F,
+                Alcohol = 9.5F,
+                Quality = 0 // We are gonna predict this. The expected value is 6
+
+            });
+
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
         }
@@ -63,6 +82,18 @@ namespace WineML
             Console.WriteLine($"RSquared Score: {metrics.RSquared:0.##}");
             Console.WriteLine($"Root Mean Squared Error: {metrics.RootMeanSquaredError:#.##}");
             Console.WriteLine("DONE!");
+        }
+
+        private static void Predict(MLContext mlContext, IDataView trainingData, WineData wineData)
+        {
+            Console.Write("Train model...");
+            var model = CreateModel(mlContext, trainingData, _features);
+            Console.WriteLine("DONE!");
+
+            Console.Write("Predicting quality...");
+            var predictionFunction = mlContext.Model.CreatePredictionEngine<WineData, WinePrediction>(model);
+            var prediction = predictionFunction.Predict(wineData);
+            Console.WriteLine($"{prediction.Quality:0.##}");
         }
 
         private static TransformerChain<RegressionPredictionTransformer<FastTreeRegressionModelParameters>> CreateModel(MLContext mlContext, IDataView trainingData, params string[] features)
