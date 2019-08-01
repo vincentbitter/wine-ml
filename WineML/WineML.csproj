@@ -6,15 +6,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Data\winequality-white.csv" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Data\winequality-white.csv" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.ML" Version="1.0.0-preview" />
+    <PackageReference Include="Microsoft.ML.FastTree" Version="1.0.0-preview" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Data\winequality-white-train.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\winequality-white-validate.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
